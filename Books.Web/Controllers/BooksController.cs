@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Threading.Tasks;
 using Books.Data.Models;
 using Books.Services.Interfaces;
 using Books.Web.RequestsModels;
@@ -63,6 +64,23 @@ namespace Books.Web.Controllers
         {
             _bookService.DeleteBookById(bookId);
             return Ok($"Book with ID = {bookId} was removed!");
+        }
+
+        [HttpPost]
+        [Route("book/create-async")]
+        public async Task<ActionResult<Book>> CreateBookAsync([FromBody] BookRequestModel bookRequestModel)
+        {
+            var book = new Book
+            {
+                Title = bookRequestModel.Title,
+                Author = bookRequestModel.Author,
+                PageNumbers = bookRequestModel.PageNumbers
+                
+            };
+
+            await _bookService.CreateBookAsync(book);
+
+            return Ok($"Book create via async method");
         }
 
     }
