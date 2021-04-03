@@ -27,4 +27,7 @@
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="RequestsModels\" />
+  </ItemGroup>
 </Project>
