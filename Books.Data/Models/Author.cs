@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Books.Data.Models
@@ -9,6 +10,6 @@ namespace Books.Data.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
-
+        //List<Book> Books { get; set; }
     }
 }

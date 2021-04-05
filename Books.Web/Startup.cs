@@ -40,6 +40,12 @@ namespace Books.Web
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(builder => builder
+                .WithOrigins("http://localhost:3000")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+            );
+
             app.UseHttpsRedirection();
 
             app.UseRouting();

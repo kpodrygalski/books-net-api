@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Books.Data;
 using Books.Data.Models;
 using Books.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Books.Services
 {
@@ -16,34 +18,41 @@ namespace Books.Services
             _db = db;
         }
 
-        public List<Book> GetAllBooks()
+        public async Task<IEnumerable<Book>> GetAllBooksAsync()
         {
-            return _db.Books.ToList();
+            return await _db.Books.ToListAsync();
         }
 
-        public Book GetBookById(int bookId)
+        public async Task<Book> GetBookByIdAsync(int bookId)
         {
-            return _db.Books.Find(bookId);
+            return await _db.Books.FindAsync(bookId);
         }
 
-        public void CreateBook(Book book)
+        public async Task CreateBookAsync(Book book)
         {
-            _db.Books.Add(book);
-            _db.SaveChanges();
+            await _db.Books.AddAsync(book);
+            await _db.SaveChangesAsync();
         }
 
-        public void DeleteBookById(int bookId)
+        public async Task DeleteBookByIdAsync(int bookId)
         {
-            var book = _db.Books.Find(bookId);
+            var book = await _db.Books.FindAsync(bookId);
 
             if (book != null)
             {
-                _db.Remove(bookId);
-                _db.SaveChanges();
-            }else
-            {
-                throw new InvalidOperationException("Book not exist!");
+                _db.Remove(book);
+                await _db.SaveChangesAsync();
             }
+            else
+            {
+                throw new InvalidOperationException($"Book with ID = {bookId} not exist in database!");
+            }
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksByAuthorId(int authorId)
+        {
+            var books = await _db.Books.Include(book => book.Author).Where(x => x.AuthorId == authorId).ToListAsync();
+            return books;
         }
     }
 }

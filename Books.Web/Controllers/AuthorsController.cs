@@ -1,18 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Books.Data;
 using Books.Data.Models;
 using Books.Services.Interfaces;
 using Books.Web.RequestsModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Books.Web.Controllers
 {
-    
+
     [ApiController]
     [Route("api/[controller]")]
     public class AuthorsController : ControllerBase
@@ -28,17 +23,22 @@ namespace Books.Web.Controllers
 
         [HttpGet]
         [Route("authors-list")]
-        public ActionResult GetAuthorsList()
+        public async Task<ActionResult<Author>> GetAuthorsList()
         {
-            var authors = _authorService.GetAllAuthors();
+            var authors = await _authorService.GetAllAuthorsAsync();
+
+            if (authors == null) return NotFound();
+
             return Ok(authors);
         }
 
         [HttpGet]
         [Route("author/{authorId}/details")]
-        public ActionResult GetAuthorById([FromRoute] int authorId)
+        public async Task<ActionResult<Author>> GetAuthorById([FromRoute] int authorId)
         {
-            var author = _authorService.GetAuthorById(authorId);
+            var author = await _authorService.GetAuthorByIdAsync(authorId);
+            if (author == null) return NotFound();
+            
             return Ok(author);
         }
 
@@ -61,7 +61,7 @@ namespace Books.Web.Controllers
         [Route("author/{authorId}/delete")]
         public async Task<ActionResult> DeleteAuthorById([FromRoute] int authorId)
         {
-            await _authorService.DeleteAuthorById(authorId);
+            await _authorService.DeleteAuthorByIdAsync(authorId);
 
             return Ok($"Author with ID = {authorId} was removed!");
         }

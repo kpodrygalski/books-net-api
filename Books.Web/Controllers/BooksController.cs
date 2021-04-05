@@ -24,50 +24,28 @@ namespace Books.Web.Controllers
 
         [HttpGet]
         [Route("books-list")]
-        public ActionResult GetBooks()
+        public async Task<ActionResult<Book>> GetAllBooks()
         {
-            var books = _bookService.GetAllBooks();
+            var books = await _bookService.GetAllBooksAsync();
             return Ok(books);
         }
 
         [HttpGet]
         [Route("book/{bookId}/details")]
-        public ActionResult GetBookById([FromRoute] int bookId)
+        public async Task<ActionResult<Book>> GetBookByIdAsync([FromRoute] int bookId)
         {
-            var book = _bookService.GetBookById(bookId);
+            var book = await _bookService.GetBookByIdAsync(bookId);
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
             return Ok(book);
         }
 
         [HttpPost]
         [Route("book/create")]
-        public ActionResult CreateBook([FromBody] BookRequestModel bookRequestModel)
-        {
-            var now = DateTime.UtcNow;
-
-            var book = new Book
-            {
-                Title = bookRequestModel.Title,
-                AuthorId = bookRequestModel.AuthorId,
-                PageNumbers = bookRequestModel.PageNumbers,
-                CreatedOn = now,
-                UpdatedOn = now
-            };
-
-            _bookService.CreateBook(book);
-
-            return Ok($"Book {book.Title} by {book.Author} was created succesfully on: {book.CreatedOn} !");
-        }
-
-        [HttpDelete]
-        [Route("book/{bookId}/delete")]
-        public ActionResult DeleteBookById(int bookId)
-        {
-            _bookService.DeleteBookById(bookId);
-            return Ok($"Book with ID = {bookId} was removed!");
-        }
-
-        [HttpPost]
-        [Route("book/create-async")]
         public async Task<ActionResult<Book>> CreateBookAsync([FromBody] BookRequestModel bookRequestModel)
         {
             var book = new Book
@@ -75,21 +53,28 @@ namespace Books.Web.Controllers
                 Title = bookRequestModel.Title,
                 AuthorId = bookRequestModel.AuthorId,
                 PageNumbers = bookRequestModel.PageNumbers
-                
+
             };
 
             await _bookService.CreateBookAsync(book);
 
-            return Ok($"Book create via async method");
+            return Ok($"Book {book.Title} created!");
+        }
+
+        [HttpDelete]
+        [Route("book/{bookId}/delete")]
+        public async Task<ActionResult<Book>> DeleteBookByIdAsync(int bookId)
+        {
+            await _bookService.DeleteBookByIdAsync(bookId);
+            return Ok($"Book with ID = {bookId} was removed!");
         }
 
         [HttpGet]
         [Route("where/authorId/{authorId}")]
-        public ActionResult GetBookByAuthorId([FromRoute] int authorId)
+        public async Task<ActionResult<Book>> GetBookByAuthorId([FromRoute] int authorId)
         {
-            var books = _bookService.GetBooksByAuthorId(authorId);
+            var books = await _bookService.GetBooksByAuthorId(authorId);
             return Ok(books);
         }
-
     }
 }
