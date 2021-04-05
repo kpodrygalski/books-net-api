@@ -47,7 +47,7 @@ namespace Books.Web.Controllers
             var book = new Book
             {
                 Title = bookRequestModel.Title,
-                Author = bookRequestModel.Author,
+                AuthorId = bookRequestModel.AuthorId,
                 PageNumbers = bookRequestModel.PageNumbers,
                 CreatedOn = now,
                 UpdatedOn = now
@@ -73,7 +73,7 @@ namespace Books.Web.Controllers
             var book = new Book
             {
                 Title = bookRequestModel.Title,
-                Author = bookRequestModel.Author,
+                AuthorId = bookRequestModel.AuthorId,
                 PageNumbers = bookRequestModel.PageNumbers
                 
             };
@@ -81,6 +81,14 @@ namespace Books.Web.Controllers
             await _bookService.CreateBookAsync(book);
 
             return Ok($"Book create via async method");
+        }
+
+        [HttpGet]
+        [Route("where/authorId/{authorId}")]
+        public ActionResult GetBookByAuthorId([FromRoute] int authorId)
+        {
+            var books = _bookService.GetBooksByAuthorId(authorId);
+            return Ok(books);
         }
 
     }

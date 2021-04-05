@@ -29,6 +29,7 @@ namespace Books.Web
                 options.UseNpgsql(Configuration.GetConnectionString("dev"));
             });
             services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IAuthorService, AuthorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
